@@ -15,7 +15,7 @@ const Search = ({ searchResults }: SearchProps) => {
   return (
     <div className={styles.sourceRow}>
       {webPages.length > 0 ? (
-        webPages.slice(0, 3).map((item: any, index: number) => (
+        webPages.slice(0, 10).map((item: any, index: number) => (
           <a
             href={item.url}
             target="_blank"

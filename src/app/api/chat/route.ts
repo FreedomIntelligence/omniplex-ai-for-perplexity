@@ -6,6 +6,8 @@ const openai = new OpenAI({
   baseURL: 'https://api.ai-gaochao.cn/v1'
 });
 
+const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
+
 const systemMessage = {
   role: "system",
   content: "你是一个专业的医疗助手，专门帮助用户解答医疗健康相关的问题。你必须：\n" +
@@ -16,6 +18,34 @@ const systemMessage = {
 };
 
 export const runtime = "edge";
+
+async function searchMedical(query: string) {
+  if (!TAVILY_API_KEY) {
+    console.error("Tavily API key is undefined. Please check your .env.local file.");
+    return null;
+  }
+
+  try {
+    const response = await fetch('https://api.tavily.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${TAVILY_API_KEY}`
+      },
+      body: JSON.stringify({
+        query: query.trim(),
+        search_depth: "advanced",
+        max_results: 10,
+        include_answer: "advanced"
+      })
+    });
+    const data = await response.json();
+    return data.answer || null;
+  } catch (error) {
+    console.error("TAVILY API request error:", error);
+    return null;
+  }
+}
 
 export async function POST(req: Request) {
   const {
@@ -28,6 +58,19 @@ export async function POST(req: Request) {
     presence_penalty,
   } = await req.json();
 
+  // 获取用户最新的消息
+  const userMessage = messages[messages.length - 1];
+  const searchResult = await searchMedical(userMessage.content);
+
+  // 如果有搜索结果，将其添加到系统消息中
+  let enhancedMessages = [systemMessage, ...messages];
+  if (searchResult) {
+    enhancedMessages.splice(1, 0, {
+      role: "system",
+      content: `根据搜索结果补充信息：${searchResult}`
+    });
+  }
+
   const response = await openai.chat.completions.create({
     stream: true,
     model: model,
@@ -36,7 +79,7 @@ export async function POST(req: Request) {
     top_p: top_p,
     frequency_penalty: frequency_penalty,
     presence_penalty: presence_penalty,
-    messages: [systemMessage, ...messages],
+    messages: enhancedMessages,
   });
 
   const stream = OpenAIStream(response);
