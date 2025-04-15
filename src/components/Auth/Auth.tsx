@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { Modal, ModalContent } from "@nextui-org/modal";
 import { useDispatch } from "react-redux";
 import { setAuthState, setUserDetailsState } from "@/store/authSlice";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
 import dynamic from 'next/dynamic';
+import { wechatConfig } from "@/config/wechatConfig";
 
 type Props = {
   isOpen: boolean;
@@ -23,12 +24,20 @@ const Auth = (props: Props) => {
   const handleAuth = async () => {
     setLoading(true);
     try {
-      const auth = getAuth();
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+      // 检查数据库连接
+      if (!db) {
+        throw new Error('数据库连接失败');
+      }
 
-      const userRef = doc(db, "users", user.uid);
+      // 使用固定的测试账号信息
+      const mockUserInfo = {
+        openid: 'test_user_001',
+        nickname: '测试用户',
+        headimgurl: 'https://example.com/default-avatar.png',
+      };
+
+      // 保存用户信息到Firebase
+      const userRef = doc(db, 'users', mockUserInfo.openid);
       const userDoc = await getDoc(userRef);
 
       if (userDoc.exists()) {
@@ -36,9 +45,8 @@ const Auth = (props: Props) => {
           userRef,
           {
             userDetails: {
-              email: user.email,
-              name: user.displayName,
-              profilePic: user.photoURL,
+              name: mockUserInfo.nickname,
+              profilePic: mockUserInfo.headimgurl,
             },
           },
           { merge: true }
@@ -46,27 +54,27 @@ const Auth = (props: Props) => {
       } else {
         await setDoc(userRef, {
           userDetails: {
-            email: user.email,
-            name: user.displayName,
-            profilePic: user.photoURL,
+            name: mockUserInfo.nickname,
+            profilePic: mockUserInfo.headimgurl,
             createdAt: serverTimestamp(),
           },
         });
       }
 
+      // 更新Redux状态
       dispatch(setAuthState(true));
       dispatch(
         setUserDetailsState({
-          uid: user.uid,
-          name: user.displayName ?? "",
-          email: user.email ?? "",
-          profilePic: user.photoURL ?? "",
+          uid: mockUserInfo.openid,
+          name: mockUserInfo.nickname,
+          email: '',
+          profilePic: mockUserInfo.headimgurl,
         })
       );
-      props.onClose();
-      setLoading(false);
+      router.push('/');
     } catch (error) {
-      console.log("error", error);
+      console.error("登录失败:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -115,12 +123,12 @@ const Auth = (props: Props) => {
               ) : (
                 <div className={styles.button} onClick={handleAuth}>
                   <Image
-                    src={"/svgs/Google.svg"}
-                    alt={"Google"}
+                    src={"/svgs/WeChat.svg"}
+                    alt={"WeChat"}
                     width={24}
                     height={24}
                   />
-                  <div className={styles.buttonText}>Continue with Google</div>
+                  <div className={styles.buttonText}>Continue with WeChat</div>
                 </div>
               )}
             </div>

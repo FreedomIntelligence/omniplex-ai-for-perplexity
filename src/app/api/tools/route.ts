@@ -1,6 +1,9 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: 'https://api.ai-gaochao.cn/v1'
+});
 
 export async function POST(req: Request) {
   if (req.method !== "POST") {
@@ -19,76 +22,31 @@ export async function POST(req: Request) {
       type: "function",
       function: {
         name: "search",
-        description: "Search for information based on a query",
-        parameters: {
-          type: "object",
-          properties: {},
-        },
-      },
-    },
-    {
-      type: "function",
-      function: {
-        name: "stock",
-        description: "Get the latest stock information for a given symbol",
+        description: "Search for medical and health-related information only, including symptoms, diseases, treatments and health advice. Reject any non-medical queries.",
         parameters: {
           type: "object",
           properties: {
-            symbol: {
+            query: {
               type: "string",
-              description: "Stock symbol to fetch data for.",
-            },
+              description: "Only accept medical or health-related search queries, such as symptoms, diseases, treatments or health concerns. Must reject any non-medical queries with a message explaining that this is a medical-only assistant."
+            }
           },
-          required: ["symbol"],
+          required: ["query"]
         },
       },
-    },
-    {
-      type: "function",
-      function: {
-        name: "dictionary",
-        description: "Get dictionary information for a given word",
-        parameters: {
-          type: "object",
-          properties: {
-            word: {
-              type: "string",
-              description: "Word to look up in the dictionary.",
-            },
-          },
-          required: ["word"],
-        },
-      },
-    },
-    {
-      type: "function",
-      function: {
-        name: "weather",
-        description: "Get the current weather in a given location",
-        parameters: {
-          type: "object",
-          properties: {
-            location: {
-              type: "string",
-              description: "City name to fetch the weather for.",
-            },
-            unit: {
-              type: "string",
-              enum: ["celsius", "fahrenheit"],
-              description: "Temperature unit.",
-            },
-          },
-          required: ["location"],
-        },
-      },
-    },
-    // Add more functions as needed
+    }
   ];
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-0125",
-      messages: messages,
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "你是一个专业的医疗助手，专门帮助用户解答医疗健康相关的问题。你必须：\n1. 只回答与医疗健康相关的问题\n2. 对于任何非医疗健康相关的问题（如宠物、娱乐、生活等），必须明确拒绝并说明：'抱歉，作为一个专业的医疗助手，我只能回答与医疗健康相关的问题。'\n3. 使用专业但易懂的语言\n4. 在必要时建议用户咨询医生\n5. 不做具体的诊断，而是提供健康指导"
+        },
+        ...messages
+      ],
       tools,
       tool_choice: "auto",
     });

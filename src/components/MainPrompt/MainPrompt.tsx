@@ -17,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import { createChatThread } from "../../store/chatSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserDetailsState, selectAuthState } from "@/store/authSlice";
+import { setModel } from "@/store/aiSlice";
 import { db } from "../../../firebaseConfig";
 import { storage } from "../../../firebaseConfig";
 import { collection, doc, setDoc, writeBatch } from "firebase/firestore";
@@ -47,8 +48,8 @@ const MainPrompt = () => {
   const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
   const [open, setOpen] = useState(false);
   const [focus, setFocus] = useState({
-    website: "Focus",
-    icon: Filter,
+    website: "Model",
+    // icon: Filter,
     query: "",
   });
 
@@ -64,18 +65,112 @@ const MainPrompt = () => {
   const handleFocusChange = (
     website: string,
     query: string,
-    icon: StaticImageData
   ) => {
-    if (website === "Focus") {
+    if (website === "Model") {
       setMode("");
+      dispatch(setModel("gpt-4o"));
     } else if (website === "Writing") {
       setMode("chat");
     } else {
       setMode("search");
     }
-    setFocus({ website, icon, query });
+    // GPT系列
+    if (website === "gpt-3.5-turbo") {dispatch(setModel("gpt-3.5-turbo"));}
+    if (website === "gpt-3.5-turbo-0125") {dispatch(setModel("gpt-3.5-turbo-0125"));}
+    if (website === "gpt-3.5-turbo-0301") {dispatch(setModel("gpt-3.5-turbo-0301"));}
+    if (website === "gpt-3.5-turbo-0613") {dispatch(setModel("gpt-3.5-turbo-0613"));}
+    if (website === "gpt-3.5-turbo-1106") {dispatch(setModel("gpt-3.5-turbo-1106"));}
+    if (website === "gpt-3.5-turbo-16k") {dispatch(setModel("gpt-3.5-turbo-16k"));}
+    if (website === "gpt-3.5-turbo-16k-0613") {dispatch(setModel("gpt-3.5-turbo-16k-0613"));}
+    if (website === "gpt-4") {dispatch(setModel("gpt-4"));}
+    if (website === "gpt-4-0125-preview") {dispatch(setModel("gpt-4-0125-preview"));}
+    if (website === "gpt-4-0314") {dispatch(setModel("gpt-4-0314"));}
+    if (website === "gpt-4-0613") {dispatch(setModel("gpt-4-0613"));}
+    if (website === "gpt-4-1106-preview") {dispatch(setModel("gpt-4-1106-preview"));}
+    if (website === "gpt-4-32k") {dispatch(setModel("gpt-4-32k"));}
+    if (website === "gpt-4-32k-0314") {dispatch(setModel("gpt-4-32k-0314"));}
+    if (website === "gpt-4-32k-0613") {dispatch(setModel("gpt-4-32k-0613"));}
+    if (website === "gpt-4-turbo") {dispatch(setModel("gpt-4-turbo"));}
+    if (website === "gpt-4-turbo-2024-04-09") {dispatch(setModel("gpt-4-turbo-2024-04-09"));}
+    if (website === "gpt-4-turbo-preview") {dispatch(setModel("gpt-4-turbo-preview"));}
+    if (website === "gpt-4-vision-preview") {dispatch(setModel("gpt-4-vision-preview"));}
+    if (website === "gpt-4.5-preview") {dispatch(setModel("gpt-4.5-preview"));}
+    if (website === "gpt-4.5-preview-2025-02-27") {dispatch(setModel("gpt-4.5-preview-2025-02-27"));}
+    if (website === "gpt-4o") {dispatch(setModel("gpt-4o"));}
+    if (website === "gpt-4o-2024-05-13") {dispatch(setModel("gpt-4o-2024-05-13"));}
+    if (website === "gpt-4o-2024-08-06") {dispatch(setModel("gpt-4o-2024-08-06"));}
+    if (website === "gpt-4o-2024-11-20") {dispatch(setModel("gpt-4o-2024-11-20"));}
+    if (website === "gpt-4o-mini") {dispatch(setModel("gpt-4o-mini"));}
+    if (website === "gpt-4o-mini-2024-07-18") {dispatch(setModel("gpt-4o-mini-2024-07-18"));}
+    
+    // Claude系列
+    if (website === "claude-3-5-haiku-20241022") {dispatch(setModel("claude-3-5-haiku-20241022"));}
+    if (website === "claude-3-5-sonnet-20240620") {dispatch(setModel("claude-3-5-sonnet-20240620"));}
+    if (website === "claude-3-5-sonnet-20241022") {dispatch(setModel("claude-3-5-sonnet-20241022"));}
+    if (website === "claude-3-7-sonnet-20250219") {dispatch(setModel("claude-3-7-sonnet-20250219"));}
+    if (website === "claude-3-7-sonnet-20250219-thinking") {dispatch(setModel("claude-3-7-sonnet-20250219-thinking"));}
+    if (website === "claude-3-opus-20240229") {dispatch(setModel("claude-3-opus-20240229"));}
+    
+    // Deepseek系列
+    if (website === "deepseek-chat") {dispatch(setModel("deepseek-chat"));}
+    if (website === "deepseek-r1") {dispatch(setModel("deepseek-r1"));}
+    if (website === "deepseek-reasoner") {dispatch(setModel("deepseek-reasoner"));}
+    if (website === "deepseek-v3") {dispatch(setModel("deepseek-v3"));}
+    
+    // 豆包系列
+    if (website === "doubao-1-5-lite-32k") {dispatch(setModel("doubao-1-5-lite-32k"));}
+    if (website === "doubao-1-5-lite-32k-250115") {dispatch(setModel("doubao-1-5-lite-32k-250115"));}
+    if (website === "doubao-1-5-pro-256k-250115") {dispatch(setModel("doubao-1-5-pro-256k-250115"));}
+    if (website === "doubao-1-5-pro-32k-250115") {dispatch(setModel("doubao-1-5-pro-32k-250115"));}
+    if (website === "doubao-1-5-vision-pro-32k") {dispatch(setModel("doubao-1-5-vision-pro-32k"));}
+    if (website === "doubao-1.5-pro-256k") {dispatch(setModel("doubao-1.5-pro-256k"));}
+    
+    // Gemini系列
+    if (website === "gemini-1.5-flash") {dispatch(setModel("gemini-1.5-flash"));}
+    if (website === "gemini-1.5-flash-002") {dispatch(setModel("gemini-1.5-flash-002"));}
+    if (website === "gemini-1.5-flash-8b") {dispatch(setModel("gemini-1.5-flash-8b"));}
+    if (website === "gemini-1.5-flash-exp-0827") {dispatch(setModel("gemini-1.5-flash-exp-0827"));}
+    if (website === "gemini-1.5-flash-latest") {dispatch(setModel("gemini-1.5-flash-latest"));}
+    if (website === "gemini-1.5-pro") {dispatch(setModel("gemini-1.5-pro"));}
+    if (website === "gemini-1.5-pro-002") {dispatch(setModel("gemini-1.5-pro-002"));}
+    if (website === "gemini-1.5-pro-exp-0801") {dispatch(setModel("gemini-1.5-pro-exp-0801"));}
+    if (website === "gemini-1.5-pro-latest") {dispatch(setModel("gemini-1.5-pro-latest"));}
+    if (website === "gemini-2.0-flash") {dispatch(setModel("gemini-2.0-flash"));}
+    if (website === "gemini-2.0-flash-001") {dispatch(setModel("gemini-2.0-flash-001"));}
+    if (website === "gemini-2.0-flash-exp") {dispatch(setModel("gemini-2.0-flash-exp"));}
+    if (website === "gemini-2.0-flash-lite") {dispatch(setModel("gemini-2.0-flash-lite"));}
+    if (website === "gemini-2.0-flash-lite-preview-02-05") {dispatch(setModel("gemini-2.0-flash-lite-preview-02-05"));}
+    if (website === "gemini-2.0-flash-thinking-exp") {dispatch(setModel("gemini-2.0-flash-thinking-exp"));}
+    if (website === "gemini-2.0-flash-thinking-exp-1219") {dispatch(setModel("gemini-2.0-flash-thinking-exp-1219"));}
+    if (website === "gemini-2.0-pro-exp-02-05") {dispatch(setModel("gemini-2.0-pro-exp-02-05"));}
+    
+    // Grok系列
+    if (website === "grok-3") {dispatch(setModel("grok-3"));}
+    if (website === "grok-3-r1") {dispatch(setModel("grok-3-r1"));}
+    if (website === "grok-3-reason") {dispatch(setModel("grok-3-reason"));}
+    
+    // O1系列
+    if (website === "o1") {dispatch(setModel("o1"));}
+    if (website === "o1-2024-12-17") {dispatch(setModel("o1-2024-12-17"));}
+    if (website === "o1-mini") {dispatch(setModel("o1-mini"));}
+    if (website === "o1-mini-2024-09-12") {dispatch(setModel("o1-mini-2024-09-12"));}
+    if (website === "o1-preview") {dispatch(setModel("o1-preview"));}
+    if (website === "o1-preview-2024-09-12") {dispatch(setModel("o1-preview-2024-09-12"));}
+    if (website === "o3-mini") {dispatch(setModel("o3-mini"));}
+    if (website === "o3-mini-2025-01-31") {dispatch(setModel("o3-mini-2025-01-31"));}
+    
+    // 其他模型
+    if (website === "qvq-72b-preview") {dispatch(setModel("qvq-72b-preview"));}
+    if (website === "qwen-max-2025-01-25") {dispatch(setModel("qwen-max-2025-01-25"));}
+    if (website === "qwen-max-latest") {dispatch(setModel("qwen-max-latest"));}
+    if (website === "qwen-omni-turbo") {dispatch(setModel("qwen-omni-turbo"));}
+    if (website === "qwen-omni-turbo-latest") {dispatch(setModel("qwen-omni-turbo-latest"));}
+    if (website === "qwen-plus-latest") {dispatch(setModel("qwen-plus-latest"));}
+    
+    setFocus({ website, query });
     setOpen(false);
   };
+
 
   const handleSend = async () => {
     if (text.trim() !== "") {
@@ -247,7 +342,7 @@ const MainPrompt = () => {
           <div className={styles.sectionRow}>
             {width <= 512 && (
               <div className={styles.button} onClick={() => setOpen(true)}>
-                <Image src={focus.icon} alt="Filter" width={24} height={24} />
+                {/* <Image src={focus.icon} alt="Filter" width={24} height={24} /> */}
                 <p className={styles.buttonText}>{focus.website}</p>
               </div>
             )}
@@ -262,12 +357,12 @@ const MainPrompt = () => {
               >
                 <PopoverTrigger>
                   <div className={styles.button}>
-                    <Image
+                    {/* <Image
                       src={focus.icon}
                       alt="Filter"
                       width={18}
                       height={18}
-                    />
+                    /> */}
                     <p className={styles.buttonText}>{focus.website}</p>
                   </div>
                 </PopoverTrigger>
@@ -279,21 +374,21 @@ const MainPrompt = () => {
                         className={styles.popoverBlock}
                         onClick={() =>
                           option.website === "All"
-                            ? handleFocusChange("Focus", "", Filter)
+                            ? handleFocusChange("Focus", "")
                             : handleFocusChange(
                                 option.website,
                                 option.query,
-                                option.icon
+                                // option.icon
                               )
                         }
                       >
                         <div className={styles.popoverTitleContainer}>
-                          <Image
+                          {/* <Image
                             src={option.icon}
                             alt={option.website}
                             width={24}
                             height={24}
-                          />
+                          /> */}
                           <p className={styles.popoverText}>{option.website}</p>
                         </div>
                         <p className={styles.popoverSmallText}>
@@ -320,22 +415,22 @@ const MainPrompt = () => {
                             className={styles.modalBlock}
                             onClick={() =>
                               option.website === "All"
-                                ? handleFocusChange("Focus", "", Filter)
+                                ? handleFocusChange("Focus", "")
                                 : handleFocusChange(
                                     option.website,
                                     option.query,
-                                    option.icon
+                                    // option.icon
                                   )
                             }
                           >
                             <div className={styles.modalRow}>
                               <div className={styles.modalTitleContainer}>
-                                <Image
+                                {/* <Image
                                   src={option.icon}
                                   alt={option.website}
                                   width={24}
                                   height={24}
-                                />
+                                /> */}
                                 <p className={styles.modalText}>
                                   {option.website}
                                 </p>

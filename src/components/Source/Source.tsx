@@ -3,15 +3,14 @@ import Image from "next/image";
 import styles from "./Source.module.css";
 import File from "../File/File";
 import Search from "../Search/Search";
-import Stock from "../Stock/Stock";
+// 暂时注释掉Stock导入，因为Stock.tsx模块存在问题
+// import Stock from "../Stock/Stock";
 import Widget from "../Widget/Widget";
-import Weather from "../Weather/Weather";
 import Dictionary from "../Dictionary/Dictionary";
 import {
   FileInfo,
   SearchType,
   StockType,
-  WeatherType,
   DictionaryType,
 } from "@/utils/types";
 
@@ -22,7 +21,6 @@ type Props = {
   fileInfo?: FileInfo;
   searchResults?: SearchType;
   stockResults?: StockType;
-  weatherResults?: WeatherType;
   dictionaryResults?: DictionaryType;
 };
 
@@ -42,21 +40,16 @@ const Source = (props: Props) => {
         )}
 
         {props.mode === "search" && (
-          <>
+          <div>
             <Search searchResults={props.searchResults} />
             <Widget searchResults={props.searchResults} />
-          </>
+          </div>
         )}
 
         {props.mode === "stock" && (
           <div className={styles.sourceRow}>
-            <Stock stockResults={props.stockResults} />
-          </div>
-        )}
-
-        {props.mode === "weather" && (
-          <div className={styles.sourceRow}>
-            <Weather weatherResults={props.weatherResults} />
+            {/* 暂时注释掉Stock组件，等Stock模块问题修复后再启用 */}
+            {/* <Stock stockResults={props.stockResults} /> */}
           </div>
         )}
 

@@ -140,10 +140,28 @@
   border: solid 1px #ffffff14;
 }
 .popover {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  row-gap: 4px;
-  column-gap: 4px;
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.popover::-webkit-scrollbar {
+  width: 4px;
+}
+
+.popover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.popover::-webkit-scrollbar-thumb {
+  background: #ffffff33;
+  border-radius: 2px;
+}
+
+.popover::-webkit-scrollbar-thumb:hover {
+  background: #ffffff66;
 }
 .popoverBlock {
   max-width: 200px;

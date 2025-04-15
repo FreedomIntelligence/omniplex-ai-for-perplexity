@@ -37,12 +37,8 @@ yarn
 3. Fill out secrets in `.env.local`
 
 ```bash
-BING_API_KEY=
+TAVILY_API_KEY=
 OPENAI_API_KEY=
-
-OPENWEATHERMAP_API_KEY=
-ALPHA_VANTAGE_API_KEY=
-FINNHUB_API_KEY=
 ```
 
 4. Run the development server

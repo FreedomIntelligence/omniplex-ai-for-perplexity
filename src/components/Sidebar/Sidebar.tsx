@@ -7,7 +7,6 @@ import History from "../History/History";
 import Library from "../Library/Library";
 import Plugins from "../Plugins/Plugins";
 import Profile from "../Profile/Profile";
-import Settings from "../Settings/Settings";
 import Auth from "../Auth/Auth";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
@@ -21,8 +20,6 @@ import Chat from "../../../public/svgs/sidebar/Chat_Active.svg";
 import ChatInactive from "../../../public/svgs/sidebar/Chat_Inactive.svg";
 import Folder from "../../../public/svgs/sidebar/Folder_Active.svg";
 import FolderInactive from "../../../public/svgs/sidebar/Folder_Inactive.svg";
-import Setting from "../../../public/svgs/sidebar/Setting_Active.svg";
-import SettingInactive from "../../../public/svgs/sidebar/Setting_Inactive.svg";
 import Plugin from "../../../public/svgs/sidebar/Plugin_Active.svg";
 import PluginInactive from "../../../public/svgs/sidebar/Plugin_Inactive.svg";
 import User from "../../../public/svgs/sidebar/User.svg";
@@ -141,6 +138,13 @@ const Sidebar = () => {
               }}/>
               <div className={styles.iconContainer}>
                 <div>
+                  <Image
+                    src={Collapse}
+                    alt="Collapse"
+                    // title="collapse"
+                    className={styles.icon}
+                    onClick={closeSidebar}
+                  />
                   {selected === "history" ? (
                     <Image
                       src={Chat}
@@ -155,7 +159,7 @@ const Sidebar = () => {
                       onClick={() => setSelected("history")}
                     />
                   )}
-                  {selected === "library" ? (
+                  {/* {selected === "library" ? (
                     <Image
                       src={Folder}
                       alt="Library"
@@ -167,20 +171,6 @@ const Sidebar = () => {
                       alt="Library"
                       className={styles.icon}
                       onClick={() => setSelected("library")}
-                    />
-                  )}
-                  {selected === "settings" ? (
-                    <Image
-                      src={Setting}
-                      alt="Settings"
-                      className={styles.iconActive}
-                    />
-                  ) : (
-                    <Image
-                      src={SettingInactive}
-                      alt="Settings"
-                      className={styles.icon}
-                      onClick={() => setSelected("settings")}
                     />
                   )}
                   {selected === "plugins" ? (
@@ -196,15 +186,9 @@ const Sidebar = () => {
                       className={styles.icon}
                       onClick={() => setSelected("plugins")}
                     />
-                  )}
+                  )} */}
                 </div>
                 <div>
-                  <Image
-                    src={Collapse}
-                    alt="Collapse"
-                    className={styles.icon}
-                    onClick={closeSidebar}
-                  />
                   <Image
                     src={User}
                     alt="Profile"
@@ -220,13 +204,11 @@ const Sidebar = () => {
             <div className={styles.mainContainer}>
               {selected === "history" ? (
                 <History />
-              ) : selected === "library" ? (
+              ) : /* selected === "library" ? (
                 <Library />
-              ) : selected === "settings" ? (
-                <Settings />
               ) : selected === "plugins" ? (
                 <Plugins closeSidebar={closeSidebar} />
-              ) : (
+              ) : */ (
                 <Profile close={closeSidebar} />
               )}
             </div>

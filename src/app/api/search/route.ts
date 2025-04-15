@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const CUSTOM_SEARCH_JSON_API = process.env.CUSTOM_SEARCH_JSON_API;
-const GOOGLE_CX = process.env.GOOGLE_CX;
-const GOOGLE_SEARCH_URL = "https://www.googleapis.com/customsearch/v1";
+const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -19,35 +17,46 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  if (!CUSTOM_SEARCH_JSON_API||!GOOGLE_CX) {
+  if (!TAVILY_API_KEY) {
     console.error(
-      "Bing API key is undefined. Please check your .env.local file."
+      "Tavily API key is undefined. Please check your .env.local file."
     );
     return new NextResponse(
-      JSON.stringify({ message: "Bing API key is not configured." }),
+      JSON.stringify({ message: "Tavily API is not configured properly." }),
       { status: 500 }
     );
   }
 
   try {
-    const response = await fetch(
-      `${GOOGLE_SEARCH_URL}?q=${encodeURIComponent(q)}`,
-      {
-        method: "GET",
-        headers: new Headers({
-          "Ocp-Apim-Subscription-Key": CUSTOM_SEARCH_JSON_API,
-        }),
+    const { tavily } = require('@tavily/core');
+    const client = tavily({ apiKey: TAVILY_API_KEY });
+    const tavilyData = await client.search(q.trim(), {
+      search_depth: "advanced",
+      max_results: 10,
+      include_answer: "advanced"
+    });
+    
+    // 将Tavily的返回数据转换为标准格式
+    const searchResults = {
+      data: {
+        webPages: {
+          summary: tavilyData.answer || "",
+          value: tavilyData.results?.map((item: any) => ({
+            name: item.title,
+            url: item.url,
+            snippet: item.content,
+            language: item.language || "en",
+            isFamilyFriendly: true,
+            displayUrl: item.url
+          })) || []
+        },
+        totalEstimatedMatches: tavilyData.results?.length || 0
       }
-    );
-
-    if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
-    }
-
-    const data = await response.json();
-    return NextResponse.json({ message: "Success", data });
+    };
+    
+    return NextResponse.json(searchResults);
   } catch (error) {
-    console.error("GOOGLE API request error:", error);
+    console.error("TAVILY API request error:", error);
     return new NextResponse(
       JSON.stringify({ message: "Internal Server Error" }),
       { status: 500 }

@@ -16,10 +16,12 @@ const Search = ({ searchResults }: SearchProps) => {
     <div className={styles.sourceRow}>
       {webPages.length > 0 ? (
         webPages.slice(0, 3).map((item: any, index: number) => (
-          <div
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
             className={styles.sourceBox}
             key={index}
-            onClick={() => window.open(item.url, "_blank")}
           >
             <div className={styles.sourceBoxText}>
               {cutString(item.snippet)}
@@ -38,7 +40,7 @@ const Search = ({ searchResults }: SearchProps) => {
               <div className={styles.dot} />
               <div className={styles.sourceIndex}>{index + 1}</div>
             </div>
-          </div>
+          </a>
         ))
       ) : (
         <>
